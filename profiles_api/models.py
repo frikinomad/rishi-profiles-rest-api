@@ -7,26 +7,26 @@ from django.contrib.auth.models import BaseUserManager
 
 class UserProfileManager(BaseUserManager):
     
-    def create_user():
+    def create_user(self,email,name,password=None):
         if not email:
             raise ValueError('User Must provide an email')
         
-        email = self.normalize_email()
-        user = sel.model(email=email, name=name)
+        email = self.normalize_email(email)
+        user = self.model(email=email, name=name)
 
         user.set_password(password)
         user.save(using=self._db)
 
         return user
 
-    def create_superuser(self, email, name, password):
-        user=self.create_user(email,name, password)
+    def create_superuser(self,email,name,password):
+        user=self.create_user(email,name,password)
 
         user.is_superuser=True
         user.is_staff=True
         user.save(using=self._db)
         
-        return uesr
+        return user
 
 
 class UserProfile(AbstractBaseUser, PermissionsMixin):
@@ -39,7 +39,7 @@ class UserProfile(AbstractBaseUser, PermissionsMixin):
     objects = UserProfileManager()
 
     USERNAME_FIELD = 'email'
-    REQUIRED = ['name']
+    REQUIRED_FIELDS = ['name']
 
     def get_full_name(self):
         return self.name
